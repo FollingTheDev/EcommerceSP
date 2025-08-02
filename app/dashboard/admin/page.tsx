@@ -9,6 +9,8 @@ import { Calendar, Users, DollarSign, LogOut, TrendingUp } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import AdminReportsPage from "./reports/page" // Importa a página de relatórios
+import { useIsMobile } from "@/hooks/use-mobile" // Importa o hook para detectar mobile
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select" // Importa componentes Select
 
 export default function AdminDashboard() {
   const [appointments, setAppointments] = useState([
@@ -54,6 +56,8 @@ export default function AdminDashboard() {
   ])
 
   const router = useRouter()
+  const isMobile = useIsMobile() // Usa o hook para verificar se é mobile
+  const [activeTab, setActiveTab] = useState("appointments") // Estado para controlar a aba ativa
 
   useEffect(() => {
     const userType = localStorage.getItem("userType")
@@ -93,6 +97,14 @@ export default function AdminDashboard() {
         return <Badge>{type}</Badge>
     }
   }
+
+  const tabOptions = [
+    { value: "appointments", label: "Agendamentos" },
+    { value: "financial", label: "Financeiro" },
+    { value: "clients", label: "Clientes" },
+    { value: "professionals", label: "Profissionais" },
+    { value: "reports", label: "Relatórios" },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -158,14 +170,29 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main Content */}
-        <Tabs defaultValue="appointments" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="appointments">Agendamentos</TabsTrigger>
-            <TabsTrigger value="financial">Financeiro</TabsTrigger>
-            <TabsTrigger value="clients">Clientes</TabsTrigger>
-            <TabsTrigger value="professionals">Profissionais</TabsTrigger>
-            <TabsTrigger value="reports">Relatórios</TabsTrigger> {/* Alterado para TabsTrigger */}
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          {isMobile ? (
+            <Select value={activeTab} onValueChange={setActiveTab}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione uma aba" />
+              </SelectTrigger>
+              <SelectContent>
+                {tabOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <TabsList>
+              {tabOptions.map((option) => (
+                <TabsTrigger key={option.value} value={option.value}>
+                  {option.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          )}
 
           <TabsContent value="appointments">
             <Card>
