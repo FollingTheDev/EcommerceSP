@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, FileSpreadsheet } from "lucide-react"
 import jsPDF from "jspdf"
-import "jspdf-autotable"
+import autoTable from "jspdf-autotable"
 
 export default function AdminReportsPage() {
   const allReportData = {
@@ -369,7 +369,7 @@ export default function AdminReportsPage() {
       doc.setFontSize(14)
       doc.text("Agendamentos Recentes", 10, yOffset)
       yOffset += 5
-      ;(doc as any).autoTable({
+      autoTable(doc, {
         startY: yOffset,
         head: [["ID", "Cliente", "Serviço", "Profissional", "Data", "Hora", "Status", "Preço"]],
         body: currentReportData.appointments.map((app) => [
@@ -394,7 +394,7 @@ export default function AdminReportsPage() {
       doc.setFontSize(14)
       doc.text("Transações Financeiras", 10, yOffset)
       yOffset += 5
-      ;(doc as any).autoTable({
+      autoTable(doc, {
         startY: yOffset,
         head: [["ID", "Profissional", "Tipo", "Valor", "Descrição", "Data", "Hora"]],
         body: currentReportData.financialTransactions.map((trans) => [
@@ -418,7 +418,7 @@ export default function AdminReportsPage() {
       doc.setFontSize(14)
       doc.text("Clientes Cadastrados", 10, yOffset)
       yOffset += 5
-      ;(doc as any).autoTable({
+      autoTable(doc, {
         startY: yOffset,
         head: [["ID", "Nome", "Email", "Telefone", "Última Visita", "Total Gasto", "Total Visitas"]],
         body: currentReportData.clients.map((client) => [
@@ -442,7 +442,7 @@ export default function AdminReportsPage() {
       doc.setFontSize(14)
       doc.text("Profissionais", 10, yOffset)
       yOffset += 5
-      ;(doc as any).autoTable({
+      autoTable(doc, {
         startY: yOffset,
         head: [["ID", "Nome", "Especialidade", "Status", "Ganhos Mês", "Total Retiradas"]],
         body: currentReportData.professionals.map((prof) => [
@@ -465,7 +465,7 @@ export default function AdminReportsPage() {
       doc.setFontSize(14)
       doc.text("Observações Recentes", 10, yOffset)
       yOffset += 5
-      ;(doc as any).autoTable({
+      autoTable(doc, {
         startY: yOffset,
         head: [["ID", "Profissional", "Tipo", "Observação", "Data", "Hora"]],
         body: currentReportData.observations.map((obs) => [
