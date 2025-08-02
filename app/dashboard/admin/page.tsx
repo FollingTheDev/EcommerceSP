@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Calendar, Users, DollarSign, LogOut, TrendingUp } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import AdminReportsPage from "./reports/page" // Importa a página de relatórios
 
 export default function AdminDashboard() {
   const [appointments, setAppointments] = useState([
@@ -163,6 +164,7 @@ export default function AdminDashboard() {
             <TabsTrigger value="financial">Financeiro</TabsTrigger>
             <TabsTrigger value="clients">Clientes</TabsTrigger>
             <TabsTrigger value="professionals">Profissionais</TabsTrigger>
+            <TabsTrigger value="reports">Relatórios</TabsTrigger> {/* Alterado para TabsTrigger */}
           </TabsList>
 
           <TabsContent value="appointments">
@@ -365,6 +367,10 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="reports">
+            <AdminReportsPage /> {/* Renderiza o componente de relatórios aqui */}
           </TabsContent>
         </Tabs>
       </div>
