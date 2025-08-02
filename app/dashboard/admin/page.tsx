@@ -321,20 +321,23 @@ export default function AdminDashboard() {
                       lastVisit: "2024-02-05",
                     },
                   ].map((client, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-3 sm:space-y-0"
+                    >
                       <div className="flex items-center space-x-4">
                         <div className="flex flex-col">
                           <span className="font-medium">{client.name}</span>
                           <span className="text-sm text-gray-500">{client.email}</span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                        <div className="flex flex-col">
                           <div className="font-medium">{client.phone}</div>
                           <div className="text-sm text-gray-500">Última visita: {client.lastVisit}</div>
                         </div>
-                        <Link href={`/dashboard/admin/clients/history/${index + 1}`}>
-                          <Button size="sm" variant="outline">
+                        <Link href={`/dashboard/admin/clients/history/${index + 1}`} className="w-full sm:w-auto">
+                          <Button size="sm" variant="outline" className="w-full bg-transparent">
                             Ver Histórico
                           </Button>
                         </Link>
@@ -370,21 +373,24 @@ export default function AdminDashboard() {
                     { name: "João Oliveira", specialty: "Cortes Masculinos", status: "Ativo", todayEarnings: 75.0 },
                     { name: "Ana Costa", specialty: "Coloração e Luzes", status: "Ativo", todayEarnings: 240.0 },
                   ].map((professional, index) => (
-                    <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg space-y-3 sm:space-y-0"
+                    >
                       <div className="flex items-center space-x-4">
                         <div className="flex flex-col">
                           <span className="font-medium">{professional.name}</span>
                           <span className="text-sm text-gray-500">{professional.specialty}</span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4">
-                        <div className="text-right">
+                      <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 w-full sm:w-auto">
+                        <div className="flex justify-between sm:block w-full sm:w-auto">
                           <div className="font-medium">R$ {professional.todayEarnings.toFixed(2)}</div>
                           <div className="text-sm text-gray-500">Ganhos hoje</div>
                         </div>
-                        <Badge className="bg-green-100 text-green-800">{professional.status}</Badge>
-                        <Link href={`/dashboard/admin/professionals/manage/${index + 1}`}>
-                          <Button size="sm" variant="outline">
+                        <Badge className="bg-green-100 text-green-800 w-full sm:w-auto">{professional.status}</Badge>
+                        <Link href={`/dashboard/admin/professionals/manage/${index + 1}`} className="w-full sm:w-auto">
+                          <Button size="sm" variant="outline" className="w-full bg-transparent">
                             Gerenciar
                           </Button>
                         </Link>
