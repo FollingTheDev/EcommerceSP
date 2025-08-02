@@ -1,21 +1,15 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { FileText, FileSpreadsheet } from "lucide-react" // CalendarIcon removido
+import { FileText, FileSpreadsheet } from "lucide-react"
 import jsPDF from "jspdf"
 import "jspdf-autotable"
-// Calendar, Label, Popover, PopoverContent, PopoverTrigger, format, cn removidos
 
 export default function AdminReportsPage() {
-  // Estados de data removidos
-  // const [startDate, setStartDate] = useState<Date | undefined>(undefined)
-  // const [endDate, setEndDate] = useState<Date | undefined>(undefined)
-
-  // Dados simulados para o relatório completo
   const allReportData = {
     summary: {
-      appointmentsToday: 8, // Este valor será recalculado para o período
-      dailyRevenue: 320, // Este valor será recalculado para o período
+      appointmentsToday: 8,
+      dailyRevenue: 320,
       activeClients: 156,
       occupancyRate: 85,
       totalClients: 250,
@@ -341,150 +335,157 @@ export default function AdminReportsPage() {
   }
 
   const handleDownloadPdf = () => {
-    const currentReportData = filterReportData()
-    const doc = new jsPDF()
+    console.log("Attempting to download PDF...")
+    try {
+      const currentReportData = filterReportData()
+      const doc = new jsPDF()
 
-    // Título
-    doc.setFontSize(20)
-    doc.text("Relatório Completo - Sandro Cabeleireiros", 10, 10)
-    doc.setFontSize(10)
-    doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")} ${new Date().toLocaleTimeString("pt-BR")}`, 10, 18)
-    doc.text("Período: Todos os dados", 10, 25) // Texto fixo para o período
+      // Título
+      doc.setFontSize(20)
+      doc.text("Relatório Completo - Sandro Cabeleireiros", 10, 10)
+      doc.setFontSize(10)
+      doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")} ${new Date().toLocaleTimeString("pt-BR")}`, 10, 18)
+      doc.text("Período: Todos os dados", 10, 25) // Texto fixo para o período
 
-    let yOffset = 35
+      let yOffset = 35
 
-    // Resumo Geral
-    doc.setFontSize(14)
-    doc.text("Resumo Geral", 10, yOffset)
-    doc.setFontSize(10)
-    yOffset += 10
-    doc.text(`Agendamentos no Período: ${currentReportData.summary.appointmentsInPeriod}`, 10, yOffset)
-    yOffset += 7
-    doc.text(`Receita no Período: R$ ${currentReportData.summary.revenueInPeriod.toFixed(2)}`, 10, yOffset)
-    yOffset += 7
-    doc.text(`Retiradas no Período: R$ ${currentReportData.summary.withdrawalsInPeriod.toFixed(2)}`, 10, yOffset)
-    yOffset += 7
-    doc.text(`Clientes Atendidos: ${currentReportData.summary.activeClients}`, 10, yOffset)
-    yOffset += 7
-    doc.text(`Total de Profissionais: ${currentReportData.summary.totalProfessionals}`, 10, yOffset)
-    yOffset += 7
-    doc.text(`Total de Serviços: ${currentReportData.summary.totalServices}`, 10, yOffset)
-    yOffset += 15
+      // Resumo Geral
+      doc.setFontSize(14)
+      doc.text("Resumo Geral", 10, yOffset)
+      doc.setFontSize(10)
+      yOffset += 10
+      doc.text(`Agendamentos no Período: ${currentReportData.summary.appointmentsInPeriod}`, 10, yOffset)
+      yOffset += 7
+      doc.text(`Receita no Período: R$ ${currentReportData.summary.revenueInPeriod.toFixed(2)}`, 10, yOffset)
+      yOffset += 7
+      doc.text(`Retiradas no Período: R$ ${currentReportData.summary.withdrawalsInPeriod.toFixed(2)}`, 10, yOffset)
+      yOffset += 7
+      doc.text(`Clientes Atendidos: ${currentReportData.summary.activeClients}`, 10, yOffset)
+      yOffset += 7
+      doc.text(`Total de Profissionais: ${currentReportData.summary.totalProfessionals}`, 10, yOffset)
+      yOffset += 7
+      doc.text(`Total de Serviços: ${currentReportData.summary.totalServices}`, 10, yOffset)
+      yOffset += 15
 
-    // Agendamentos Recentes
-    doc.setFontSize(14)
-    doc.text("Agendamentos Recentes", 10, yOffset)
-    yOffset += 5
-    ;(doc as any).autoTable({
-      startY: yOffset,
-      head: [["ID", "Cliente", "Serviço", "Profissional", "Data", "Hora", "Status", "Preço"]],
-      body: currentReportData.appointments.map((app) => [
-        app.id,
-        app.client,
-        app.service,
-        app.professional,
-        app.date,
-        app.time,
-        app.status,
-        `R$ ${app.price.toFixed(2)}`,
-      ]),
-      theme: "grid",
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [147, 51, 234] }, // Cor roxa
-      margin: { top: 10 },
-    })
-    yOffset = (doc as any).autoTable.previous.finalY + 15
+      // Agendamentos Recentes
+      doc.setFontSize(14)
+      doc.text("Agendamentos Recentes", 10, yOffset)
+      yOffset += 5
+      ;(doc as any).autoTable({
+        startY: yOffset,
+        head: [["ID", "Cliente", "Serviço", "Profissional", "Data", "Hora", "Status", "Preço"]],
+        body: currentReportData.appointments.map((app) => [
+          app.id,
+          app.client,
+          app.service,
+          app.professional,
+          app.date,
+          app.time,
+          app.status,
+          `R$ ${app.price.toFixed(2)}`,
+        ]),
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [147, 51, 234] }, // Cor roxa
+        margin: { top: 10 },
+      })
+      yOffset = (doc as any).autoTable.previous.finalY + 15
 
-    // Transações Financeiras
-    doc.setFontSize(14)
-    doc.text("Transações Financeiras", 10, yOffset)
-    yOffset += 5
-    ;(doc as any).autoTable({
-      startY: yOffset,
-      head: [["ID", "Profissional", "Tipo", "Valor", "Descrição", "Data", "Hora"]],
-      body: currentReportData.financialTransactions.map((trans) => [
-        trans.id,
-        trans.professional,
-        trans.type,
-        `${trans.type === "Retirada" ? "-" : "+"}R$ ${trans.amount.toFixed(2)}`,
-        trans.description,
-        trans.date,
-        trans.time,
-      ]),
-      theme: "grid",
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [147, 51, 234] },
-      margin: { top: 10 },
-    })
-    yOffset = (doc as any).autoTable.previous.finalY + 15
+      // Transações Financeiras
+      doc.setFontSize(14)
+      doc.text("Transações Financeiras", 10, yOffset)
+      yOffset += 5
+      ;(doc as any).autoTable({
+        startY: yOffset,
+        head: [["ID", "Profissional", "Tipo", "Valor", "Descrição", "Data", "Hora"]],
+        body: currentReportData.financialTransactions.map((trans) => [
+          trans.id,
+          trans.professional,
+          trans.type,
+          `${trans.type === "Retirada" ? "-" : "+"}R$ ${trans.amount.toFixed(2)}`,
+          trans.description,
+          trans.date,
+          trans.time,
+        ]),
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [147, 51, 234] },
+        margin: { top: 10 },
+      })
+      yOffset = (doc as any).autoTable.previous.finalY + 15
 
-    // Clientes
-    doc.setFontSize(14)
-    doc.text("Clientes Cadastrados", 10, yOffset)
-    yOffset += 5
-    ;(doc as any).autoTable({
-      startY: yOffset,
-      head: [["ID", "Nome", "Email", "Telefone", "Última Visita", "Total Gasto", "Total Visitas"]],
-      body: currentReportData.clients.map((client) => [
-        client.id,
-        client.name,
-        client.email,
-        client.phone,
-        client.lastVisit,
-        `R$ ${client.totalSpent.toFixed(2)}`,
-        client.totalVisits,
-      ]),
-      theme: "grid",
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [147, 51, 234] },
-      margin: { top: 10 },
-    })
-    yOffset = (doc as any).autoTable.previous.finalY + 15
+      // Clientes
+      doc.setFontSize(14)
+      doc.text("Clientes Cadastrados", 10, yOffset)
+      yOffset += 5
+      ;(doc as any).autoTable({
+        startY: yOffset,
+        head: [["ID", "Nome", "Email", "Telefone", "Última Visita", "Total Gasto", "Total Visitas"]],
+        body: currentReportData.clients.map((client) => [
+          client.id,
+          client.name,
+          client.email,
+          client.phone,
+          client.lastVisit,
+          `R$ ${client.totalSpent.toFixed(2)}`,
+          client.totalVisits,
+        ]),
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [147, 51, 234] },
+        margin: { top: 10 },
+      })
+      yOffset = (doc as any).autoTable.previous.finalY + 15
 
-    // Profissionais
-    doc.setFontSize(14)
-    doc.text("Profissionais", 10, yOffset)
-    yOffset += 5
-    ;(doc as any).autoTable({
-      startY: yOffset,
-      head: [["ID", "Nome", "Especialidade", "Status", "Ganhos Mês", "Total Retiradas"]],
-      body: currentReportData.professionals.map((prof) => [
-        prof.id,
-        prof.name,
-        prof.specialty,
-        prof.status,
-        `R$ ${prof.monthlyEarnings.toFixed(2)}`,
-        `R$ ${prof.totalWithdrawals.toFixed(2)}`,
-      ]),
-      theme: "grid",
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [147, 51, 234] },
-      margin: { top: 10 },
-    })
-    yOffset = (doc as any).autoTable.previous.finalY + 15
+      // Profissionais
+      doc.setFontSize(14)
+      doc.text("Profissionais", 10, yOffset)
+      yOffset += 5
+      ;(doc as any).autoTable({
+        startY: yOffset,
+        head: [["ID", "Nome", "Especialidade", "Status", "Ganhos Mês", "Total Retiradas"]],
+        body: currentReportData.professionals.map((prof) => [
+          prof.id,
+          prof.name,
+          prof.specialty,
+          prof.status,
+          `R$ ${prof.monthlyEarnings.toFixed(2)}`,
+          `R$ ${prof.totalWithdrawals.toFixed(2)}`,
+        ]),
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [147, 51, 234] },
+        margin: { top: 10 },
+      })
+      yOffset = (doc as any).autoTable.previous.finalY + 15
 
-    // Observações Recentes
-    doc.setFontSize(14)
-    doc.text("Observações Recentes", 10, yOffset)
-    yOffset += 5
-    ;(doc as any).autoTable({
-      startY: yOffset,
-      head: [["ID", "Profissional", "Tipo", "Observação", "Data", "Hora"]],
-      body: currentReportData.observations.map((obs) => [
-        obs.id,
-        obs.professional,
-        obs.type,
-        obs.text,
-        obs.date,
-        obs.time,
-      ]),
-      theme: "grid",
-      styles: { fontSize: 8, cellPadding: 2 },
-      headStyles: { fillColor: [147, 51, 234] },
-      margin: { top: 10 },
-    })
+      // Observações Recentes
+      doc.setFontSize(14)
+      doc.text("Observações Recentes", 10, yOffset)
+      yOffset += 5
+      ;(doc as any).autoTable({
+        startY: yOffset,
+        head: [["ID", "Profissional", "Tipo", "Observação", "Data", "Hora"]],
+        body: currentReportData.observations.map((obs) => [
+          obs.id,
+          obs.professional,
+          obs.type,
+          obs.text,
+          obs.date,
+          obs.time,
+        ]),
+        theme: "grid",
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [147, 51, 234] },
+        margin: { top: 10 },
+      })
 
-    doc.save("relatorio_sandro_cabeleireiros.pdf")
+      doc.save("relatorio_sandro_cabeleireiros.pdf")
+      console.log("PDF generated and saved successfully.")
+    } catch (error) {
+      console.error("Error generating PDF:", error)
+      alert("Ocorreu um erro ao gerar o PDF. Por favor, tente novamente.")
+    }
   }
 
   const handleDownloadCsv = () => {
@@ -523,68 +524,6 @@ export default function AdminReportsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Card de Filtragem de Datas removido */}
-        {/* <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Filtrar Relatórios por Data</CardTitle>
-            <CardDescription>Selecione um intervalo de datas para gerar relatórios personalizados.</CardDescription>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <Label htmlFor="startDate">Data de Início</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal mt-2",
-                      !startDate && "text-muted-foreground",
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {startDate ? format(startDate, "dd/MM/yyyy") : <span>Selecione a data de início</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={startDate}
-                    onSelect={setStartDate}
-                    initialFocus
-                    disabled={(date) => date > new Date() || date.getDay() === 0} // Exemplo: desabilita datas futuras e domingos
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div>
-              <Label htmlFor="endDate">Data de Fim</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-full justify-start text-left font-normal mt-2",
-                      !endDate && "text-muted-foreground",
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {endDate ? format(endDate, "dd/MM/yyyy") : <span>Selecione a data de fim</span>}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={endDate}
-                    onSelect={setEndDate}
-                    initialFocus
-                    disabled={(date) => date > new Date() || date.getDay() === 0 || (startDate && date < startDate)} // Desabilita datas futuras, domingos e datas anteriores à data de início
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-          </CardContent>
-        </Card> */}
-
         <Card className="mb-8">
           <CardHeader>
             <CardTitle>Resumo Geral do Salão</CardTitle>

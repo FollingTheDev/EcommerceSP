@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Calendar, DollarSign, User, Phone, Mail, Gift } from "lucide-react"
 import Link from "next/link"
+import { useIsMobile } from "@/hooks/use-mobile" // Importa o hook para detectar mobile
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select" // Importa componentes Select
 
 export default function ClientHistoryPage({ params }: { params: { id: string } }) {
   const [client] = useState({
@@ -66,6 +68,9 @@ export default function ClientHistoryPage({ params }: { params: { id: string } }
     },
   ])
 
+  const isMobile = useIsMobile() // Usa o hook para verificar se é mobile
+  const [activeTab, setActiveTab] = useState("appointments") // Estado para controlar a aba ativa
+
   const getStatusBadge = (status: string) => {
     switch (status) {
       case "scheduled":
@@ -99,6 +104,12 @@ export default function ClientHistoryPage({ params }: { params: { id: string } }
     const daysDiff = Math.ceil((thisYearBirthday.getTime() - today.getTime()) / (1000 * 3600 * 24))
     return daysDiff >= 0 && daysDiff <= 30
   }
+
+  const tabOptions = [
+    { value: "appointments", label: "Histórico de Agendamentos" },
+    { value: "notes", label: "Observações" },
+    { value: "preferences", label: "Preferências" },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -203,12 +214,29 @@ export default function ClientHistoryPage({ params }: { params: { id: string } }
         </div>
 
         {/* Tabs com Histórico */}
-        <Tabs defaultValue="appointments" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="appointments">Histórico de Agendamentos</TabsTrigger>
-            <TabsTrigger value="notes">Observações</TabsTrigger>
-            <TabsTrigger value="preferences">Preferências</TabsTrigger>
-          </TabsList>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          {isMobile ? (
+            <Select value={activeTab} onValueChange={setActiveTab}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecione uma aba" />
+              </SelectTrigger>
+              <SelectContent>
+                {tabOptions.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          ) : (
+            <TabsList>
+              {tabOptions.map((option) => (
+                <TabsTrigger key={option.value} value={option.value}>
+                  {option.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          )}
 
           <TabsContent value="appointments">
             <Card>
