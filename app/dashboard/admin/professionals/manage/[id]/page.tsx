@@ -21,6 +21,7 @@ import { ArrowLeft, Plus, DollarSign, TrendingUp, TrendingDown, FileText, Calend
 import Link from "next/link"
 
 export default function ManageProfessionalPage({ params }: { params: { id: string } }) {
+  // Informações estáticas do profissional
   const [professional] = useState({
     id: params.id,
     name: "Sandro Silva",
@@ -29,10 +30,9 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
     specialty: "Cortes Masculinos e Barba",
     status: "Ativo",
     hireDate: "2020-01-15",
-    todayEarnings: 125.0,
-    monthlyEarnings: 2800.0,
-    totalWithdrawals: 500.0,
   })
+
+  const today = new Date().toISOString().split("T")[0] // Formato YYYY-MM-DD para comparação
 
   const [transactions, setTransactions] = useState([
     {
@@ -40,7 +40,7 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
       type: "earning",
       amount: 25.0,
       description: "Corte Masculino - João Silva",
-      date: "2024-02-15",
+      date: today, // Definido para hoje para demonstração
       time: "14:00",
     },
     {
@@ -48,7 +48,7 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
       type: "earning",
       amount: 15.0,
       description: "Barba - Pedro Santos",
-      date: "2024-02-15",
+      date: today, // Definido para hoje para demonstração
       time: "10:30",
     },
     {
@@ -56,8 +56,16 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
       type: "withdrawal",
       amount: 50.0,
       description: "Vale solicitado",
-      date: "2024-02-14",
+      date: "2024-02-14", // Data passada
       time: "18:00",
+    },
+    {
+      id: 4,
+      type: "earning",
+      amount: 80.0,
+      description: "Coloração - Maria Clara",
+      date: "2024-02-10", // Data passada
+      time: "16:00",
     },
   ])
 
@@ -99,6 +107,29 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
   const [showTransactionDialog, setShowTransactionDialog] = useState(false)
   const [showObservationDialog, setShowObservationDialog] = useState(false)
 
+  // Cálculos dinâmicos
+  const currentMonth = new Date().getMonth()
+  const currentYear = new Date().getFullYear()
+
+  const todayEarnings = transactions
+    .filter((t) => t.type === "earning" && t.date === today)
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const monthlyEarnings = transactions
+    .filter((t) => {
+      const transactionDate = new Date(t.date)
+      return (
+        t.type === "earning" &&
+        transactionDate.getMonth() === currentMonth &&
+        transactionDate.getFullYear() === currentYear
+      )
+    })
+    .reduce((sum, t) => sum + t.amount, 0)
+
+  const totalWithdrawals = transactions
+    .filter((t) => t.type === "withdrawal" || t.type === "advance")
+    .reduce((sum, t) => sum + t.amount, 0)
+
   const handleAddTransaction = () => {
     if (!newTransaction.type || !newTransaction.amount || !newTransaction.description) {
       alert("Preencha todos os campos!")
@@ -110,7 +141,7 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
       type: newTransaction.type,
       amount: Number.parseFloat(newTransaction.amount),
       description: newTransaction.description,
-      date: new Date().toISOString().split("T")[0],
+      date: new Date().toISOString().split("T")[0], // Garante que a data é a de hoje
       time: new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
     }
 
@@ -215,8 +246,8 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">R$ {professional.todayEarnings.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">+R$ 25,00 desde a última atualização</p>
+              <div className="text-2xl font-bold text-green-600">R$ {todayEarnings.toFixed(2)}</div>
+              <p className="text-xs text-muted-foreground">Baseado em transações de hoje</p>
             </CardContent>
           </Card>
 
@@ -226,8 +257,8 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">R$ {professional.monthlyEarnings.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">+12% em relação ao mês anterior</p>
+              <div className="text-2xl font-bold">R$ {monthlyEarnings.toFixed(2)}</div>
+              <p className="text-xs text-muted-foreground">Total de ganhos no mês atual</p>
             </CardContent>
           </Card>
 
@@ -237,8 +268,8 @@ export default function ManageProfessionalPage({ params }: { params: { id: strin
               <TrendingDown className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-red-600">R$ {professional.totalWithdrawals.toFixed(2)}</div>
-              <p className="text-xs text-muted-foreground">Este mês</p>
+              <div className="text-2xl font-bold text-red-600">R$ {totalWithdrawals.toFixed(2)}</div>
+              <p className="text-xs text-muted-foreground">Total de retiradas e vales</p>
             </CardContent>
           </Card>
         </div>
