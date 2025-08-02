@@ -373,14 +373,14 @@ export default function AdminReportsPage() {
         startY: yOffset,
         head: [["ID", "Cliente", "Serviço", "Profissional", "Data", "Hora", "Status", "Preço"]],
         body: currentReportData.appointments.map((app) => [
-          String(app.id), // Explicitly convert to string
+          String(app.id),
           String(app.client),
           String(app.service),
           String(app.professional),
           String(app.date),
           String(app.time),
           String(app.status),
-          `R$ ${app.price.toFixed(2)}`,
+          `R$ ${typeof app.price === "number" ? app.price.toFixed(2) : "0.00"}`,
         ]),
         theme: "grid",
         styles: { fontSize: 8, cellPadding: 2 },
