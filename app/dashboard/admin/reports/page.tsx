@@ -308,9 +308,7 @@ export default function AdminReportsPage() {
     ],
   }
 
-  // Função para filtrar os dados com base no intervalo de datas
   const filterReportData = () => {
-    // Sempre retorna os dados completos e ajusta o resumo para refletir o total dos dados simulados
     const totalAppointments = allReportData.appointments.length
     const totalRevenue = allReportData.financialTransactions
       .filter((t) => t.type === "Ganho")
@@ -329,7 +327,7 @@ export default function AdminReportsPage() {
         activeClients: totalActiveClients,
         totalProfessionals: allReportData.professionals.length,
         totalServices: allReportData.services.length,
-        occupancyRate: 0, // Ainda requer lógica complexa
+        occupancyRate: 0,
       },
     }
   }
@@ -340,12 +338,11 @@ export default function AdminReportsPage() {
       const currentReportData = filterReportData()
       const doc = new jsPDF()
 
-      // Título
       doc.setFontSize(20)
       doc.text("Relatório Completo - Sandro Cabeleireiros", 10, 10)
       doc.setFontSize(10)
       doc.text(`Gerado em: ${new Date().toLocaleDateString("pt-BR")} ${new Date().toLocaleTimeString("pt-BR")}`, 10, 18)
-      doc.text("Período: Todos os dados", 10, 25) // Texto fixo para o período
+      doc.text("Período: Todos os dados", 10, 25)
 
       let yOffset = 35
 
@@ -368,6 +365,7 @@ export default function AdminReportsPage() {
       yOffset += 15
 
       // Agendamentos Recentes
+      console.log("Generating Appointments table...")
       doc.setFontSize(14)
       doc.text("Agendamentos Recentes", 10, yOffset)
       yOffset += 5
@@ -375,23 +373,24 @@ export default function AdminReportsPage() {
         startY: yOffset,
         head: [["ID", "Cliente", "Serviço", "Profissional", "Data", "Hora", "Status", "Preço"]],
         body: currentReportData.appointments.map((app) => [
-          app.id,
-          app.client,
-          app.service,
-          app.professional,
-          app.date,
-          app.time,
-          app.status,
+          String(app.id), // Explicitly convert to string
+          String(app.client),
+          String(app.service),
+          String(app.professional),
+          String(app.date),
+          String(app.time),
+          String(app.status),
           `R$ ${app.price.toFixed(2)}`,
         ]),
         theme: "grid",
         styles: { fontSize: 8, cellPadding: 2 },
-        headStyles: { fillColor: [147, 51, 234] }, // Cor roxa
+        headStyles: { fillColor: [147, 51, 234] },
         margin: { top: 10 },
       })
       yOffset = (doc as any).autoTable.previous.finalY + 15
 
       // Transações Financeiras
+      console.log("Generating Financial Transactions table...")
       doc.setFontSize(14)
       doc.text("Transações Financeiras", 10, yOffset)
       yOffset += 5
@@ -399,13 +398,13 @@ export default function AdminReportsPage() {
         startY: yOffset,
         head: [["ID", "Profissional", "Tipo", "Valor", "Descrição", "Data", "Hora"]],
         body: currentReportData.financialTransactions.map((trans) => [
-          trans.id,
-          trans.professional,
-          trans.type,
+          String(trans.id),
+          String(trans.professional),
+          String(trans.type),
           `${trans.type === "Retirada" ? "-" : "+"}R$ ${trans.amount.toFixed(2)}`,
-          trans.description,
-          trans.date,
-          trans.time,
+          String(trans.description),
+          String(trans.date),
+          String(trans.time),
         ]),
         theme: "grid",
         styles: { fontSize: 8, cellPadding: 2 },
@@ -415,6 +414,7 @@ export default function AdminReportsPage() {
       yOffset = (doc as any).autoTable.previous.finalY + 15
 
       // Clientes
+      console.log("Generating Clients table...")
       doc.setFontSize(14)
       doc.text("Clientes Cadastrados", 10, yOffset)
       yOffset += 5
@@ -422,13 +422,13 @@ export default function AdminReportsPage() {
         startY: yOffset,
         head: [["ID", "Nome", "Email", "Telefone", "Última Visita", "Total Gasto", "Total Visitas"]],
         body: currentReportData.clients.map((client) => [
-          client.id,
-          client.name,
-          client.email,
-          client.phone,
-          client.lastVisit,
+          String(client.id),
+          String(client.name),
+          String(client.email),
+          String(client.phone),
+          String(client.lastVisit),
           `R$ ${client.totalSpent.toFixed(2)}`,
-          client.totalVisits,
+          String(client.totalVisits),
         ]),
         theme: "grid",
         styles: { fontSize: 8, cellPadding: 2 },
@@ -438,6 +438,7 @@ export default function AdminReportsPage() {
       yOffset = (doc as any).autoTable.previous.finalY + 15
 
       // Profissionais
+      console.log("Generating Professionals table...")
       doc.setFontSize(14)
       doc.text("Profissionais", 10, yOffset)
       yOffset += 5
@@ -445,10 +446,10 @@ export default function AdminReportsPage() {
         startY: yOffset,
         head: [["ID", "Nome", "Especialidade", "Status", "Ganhos Mês", "Total Retiradas"]],
         body: currentReportData.professionals.map((prof) => [
-          prof.id,
-          prof.name,
-          prof.specialty,
-          prof.status,
+          String(prof.id),
+          String(prof.name),
+          String(prof.specialty),
+          String(prof.status),
           `R$ ${prof.monthlyEarnings.toFixed(2)}`,
           `R$ ${prof.totalWithdrawals.toFixed(2)}`,
         ]),
@@ -460,6 +461,7 @@ export default function AdminReportsPage() {
       yOffset = (doc as any).autoTable.previous.finalY + 15
 
       // Observações Recentes
+      console.log("Generating Observations table...")
       doc.setFontSize(14)
       doc.text("Observações Recentes", 10, yOffset)
       yOffset += 5
@@ -467,12 +469,12 @@ export default function AdminReportsPage() {
         startY: yOffset,
         head: [["ID", "Profissional", "Tipo", "Observação", "Data", "Hora"]],
         body: currentReportData.observations.map((obs) => [
-          obs.id,
-          obs.professional,
-          obs.type,
-          obs.text,
-          obs.date,
-          obs.time,
+          String(obs.id),
+          String(obs.professional),
+          String(obs.type),
+          String(obs.text),
+          String(obs.date),
+          String(obs.time),
         ]),
         theme: "grid",
         styles: { fontSize: 8, cellPadding: 2 },
@@ -490,7 +492,6 @@ export default function AdminReportsPage() {
 
   const handleDownloadCsv = () => {
     const currentReportData = filterReportData()
-    // Exemplo de CSV para Agendamentos
     const headers = ["ID", "Cliente", "Serviço", "Profissional", "Data", "Hora", "Status", "Preço"]
     const rows = currentReportData.appointments.map((app) => [
       app.id,
@@ -503,7 +504,6 @@ export default function AdminReportsPage() {
       app.price.toFixed(2),
     ])
 
-    // Combine cabeçalhos e linhas
     const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join("\n")
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
