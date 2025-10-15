@@ -1,4 +1,4 @@
-# 📱 Guia de Demonstração Mobile - Sandro Cabeleireiros
+# 📱 Guia de Demonstração Mobile - SaS
 
 ## 🚀 Como Apresentar a Demo no Celular
 
