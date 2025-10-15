@@ -121,7 +121,7 @@
 
 ## 🎯 **Script de Apresentação (2 minutos)**
 
-*"Apresento o sistema completo de agendamento online para o Sandro Cabeleireiros. Como podem ver, funciona perfeitamente no celular - que é onde 80% dos clientes vão acessar."*
+*"Apresento o sistema completo de agendamento online SaS para qualquer cliente Salão de Beleza/Barbearia. Como podem ver, funciona perfeitamente no celular - que é onde 80% dos clientes vão acessar."*
 
 *"Do lado do cliente: cadastro simples, agendamento intuitivo, histórico pessoal. Do lado administrativo: controle total - financeiro, observações sobre funcionários, histórico completo dos clientes."*
 
