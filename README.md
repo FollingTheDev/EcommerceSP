@@ -4,7 +4,7 @@
 
 ### 1. **Acesso Rápido**
 - Abra o navegador do celular (Chrome, Safari, etc.)
-- Acesse a URL do projeto
+- <a href="https://ecommerce-sp-seven.vercel.app">Acesse a URL do projeto</a>
 - O sistema é **100% responsivo** e funciona perfeitamente no mobile
 
 ### 2. **Fluxo de Demonstração Sugerido**
